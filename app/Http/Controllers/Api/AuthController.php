@@ -4,9 +4,10 @@ namespace App\Http\Controllers\Api;
 
 use App\Models\User;
 use App\Traits\ApiResponse;
+use Illuminate\Http\Response;
 use App\Http\Requests\LoginRequest;
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Requests\RegisterRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
@@ -37,8 +38,8 @@ class AuthController extends Controller
     public function login(LoginRequest $request){
         $validated = $request->validated();
 
-        if(!auth()->attempt($validated)){
-            return $this->apiError('Credentials not match', Response::HTTP_UNAUTHORIZED);
+        if(!Auth::attempt($validated)){
+            return $this-> apiError('Credentials not match', Response::HTTP_UNAUTHORIZED);
         }
 
         $user = User::where('email', $validated['email'])->first();
@@ -51,16 +52,16 @@ class AuthController extends Controller
         ]);
     }
 
-    // public function logout() {
-    //     try {
-    //         auth()->user()->tokens()->delete();
-    //         return $this -> apiSucces('Token revoked');
-
-    //     } catch (\Throwable $e) {
-    //             throw new HttpResponseException($this->apiError(
-    //             null,
-    //             Response::HTTP_INTERNAL_SERVER_ERROR,
-    //         ));
-    //     }
-    // }
+    public function logout() {        
+    try {
+        auth()->user()->tokens()->delete();
+        return $this->apiSuccess('Token revoked');
+    } 
+    catch(\Throwable $e) { 
+        throw new HttpResponseException($this ->apiSuccess(
+        null,
+        Response::HTTP_INTERNAL_SERVER_ERROR,
+        ));
+}
+}
 }
