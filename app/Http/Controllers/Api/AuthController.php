@@ -39,7 +39,7 @@ class AuthController extends Controller
         $validated = $request->validated();
 
         if(!Auth::attempt($validated)){
-            return $this-> apiError('Credentials not match', Response::HTTP_UNAUTHORIZED);
+            return $this-> apiFailure('Credentials not match', Response::HTTP_UNAUTHORIZED);
         }
 
         $user = User::where('email', $validated['email'])->first();
